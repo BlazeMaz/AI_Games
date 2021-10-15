@@ -17,7 +17,7 @@ function draw() {
   ellipse(mouse.x, mouse.y, 48, 48);
 
   // Call the appropriate steering behaviors for our agents
-  v.seek(mouse);
+  v.wanderInsideArea(mouse);
   v.update();
   v.display();
 
