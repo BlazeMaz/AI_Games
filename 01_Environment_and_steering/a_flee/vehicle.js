@@ -4,7 +4,7 @@ class Vehicle {
       this.velocity = createVector(0, -2);
       this.position = createVector(x, y);
       this.r = 6;
-      this.maxspeed = 8;
+      this.maxspeed = 4;
       this.maxforce = 0.2;
     }
   
@@ -26,16 +26,43 @@ class Vehicle {
   
     // A method that calculates a steering force towards a target
     // STEER = DESIRED MINUS VELOCITY
-    seek(target) {
+    wanderInsideArea(target) {
+      let d = 40;
+      let avoidanceRadius = 120;
+      let desired = null;
+    
+      let mouseVector = p5.Vector.sub(this.position, target);
+      
+      if(mouseVector.mag() < avoidanceRadius){
+        this.flee(mouseVector)
+      }
   
-      var desired = p5.Vector.sub(target, this.position); // A vector pointing from the location to the target
+      if (this.position.x < d) {
+        desired = createVector(this.maxspeed, this.velocity.y);
+      } else if (this.position.x > width - d) {
+        desired = createVector(-this.maxspeed, this.velocity.y);
+      }
   
-      // Scale to maximum speed
-      desired.setMag(this.maxspeed);
+      if (this.position.y < d) {
+        desired = createVector(this.velocity.x, this.maxspeed);
+      } else if (this.position.y > height - d) {
+        desired = createVector(this.velocity.x, -this.maxspeed);
+      }
   
-      // Steering = Desired minus velocity
-      var steer = p5.Vector.sub(desired, this.velocity);
-      steer.limit(this.maxforce); // Limit to maximum steering force
+      if (desired !== null) {
+        desired.normalize();
+        desired.mult(this.maxspeed);
+        let steer = p5.Vector.sub(desired, this.velocity);
+        steer.limit(this.maxforce);
+        this.applyForce(steer);
+      }
+    }
+
+    flee(mouseVector){
+      mouseVector.setMag(this.maxspeed);
+
+      var steer = p5.Vector.sub(mouseVector, this.velocity);
+      steer.limit(this.maxforce);
   
       this.applyForce(steer);
     }
