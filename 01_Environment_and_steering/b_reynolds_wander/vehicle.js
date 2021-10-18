@@ -1,13 +1,15 @@
 class Vehicle {
     constructor(x, y) {
       this.acceleration = createVector(0, 0);
-      this.velocity = createVector(0, -2);
+      this.velocity = createVector(2, 0);
       this.position = createVector(x, y);
       this.r = 6;
       this.maxspeed = 2;
-      this.maxforce = 0.1;
+      this.maxforce = 0.2;
 
       this.wanderTheta = PI/2;
+
+      this.path = [];
     }
   
     // Method to update location
@@ -19,6 +21,11 @@ class Vehicle {
       this.position.add(this.velocity);
       // Reset accelerationelertion to 0 each cycle
       this.acceleration.mult(0);
+
+      this.path.push(this.position.copy());
+      if(this.path.length > 100){
+        this.path.shift();
+      }
     }
   
     applyForce(force) {
@@ -30,14 +37,7 @@ class Vehicle {
     // STEER = DESIRED MINUS VELOCITY
     wanderInsideArea(target) {
       let d = 40;
-      let avoidanceRadius = 120;
       let desired = null;
-    
-      let mouseVector = p5.Vector.sub(this.position, target);
-      
-      if(mouseVector.mag() < avoidanceRadius){
-        this.flee(mouseVector)
-      }
   
       if (this.position.x < d) {
         desired = createVector(this.maxspeed, this.velocity.y);
@@ -60,13 +60,27 @@ class Vehicle {
       }
     }
 
-    flee(mouseVector){
-      mouseVector.setMag(this.maxspeed);
+    wanderReynolds(){
+      let d = 20;
+      let wanderPoint = this.velocity.copy();
+      wanderPoint.setMag(100);
+      wanderPoint.add(this.position);
 
-      var steer = p5.Vector.sub(mouseVector, this.velocity);
-      steer.limit(this.maxforce);
-  
+      let wanderRadius = 50;
+
+      let theta = this.wanderTheta + this.velocity.heading();
+      
+      let x = wanderRadius * cos(theta);
+      let y = wanderRadius * sin(theta);
+
+      wanderPoint.add(x,y);
+
+      let steer = wanderPoint.sub(this.position);
+      steer.setMag(this.maxforce);
       this.applyForce(steer);
+
+      let displacementRange = 0.3;
+      this.wanderTheta += random(-displacementRange, displacementRange);
     }
   
     display() {
@@ -84,6 +98,13 @@ class Vehicle {
       vertex(this.r, this.r * 2);
       endShape(CLOSE);
       pop();
+
+      beginShape();
+      noFill();
+      for(let v of this.path){
+        vertex(v.x, v.y);
+      }
+      endShape();
     }
   }
   
