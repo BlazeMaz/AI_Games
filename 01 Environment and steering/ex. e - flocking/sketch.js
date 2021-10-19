@@ -19,14 +19,14 @@ function setup() {
   createCanvas(640, 360);
   flock = new Flock();
   // Add an initial set of boids into the system
-  for (let i = 0; i < 60; i++) {
+  for (let i = 0; i < 20; i++) {
     let b = new Boid(width / 2, height / 2);
     flock.addBoid(b);
   }
 }
 
 function draw() {
-  background(51);
+  background(0);
   flock.run();
 }
 

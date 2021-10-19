@@ -13,6 +13,8 @@ class Boid {
     this.r = 3.0;
     this.maxspeed = 3; // Maximum speed
     this.maxforce = 0.05; // Maximum steering force
+    this.color = color(random(255), random(255), random(255));
+    this.baseColor = this.color;
   }
 
   run(boids) {
@@ -40,6 +42,8 @@ class Boid {
     this.applyForce(sep);
     this.applyForce(ali);
     this.applyForce(coh);
+
+    this.applyForce(this.fov(boids));
   }
 
   // Method to update location
@@ -71,8 +75,9 @@ class Boid {
     let theta = this.velocity.heading() + radians(90);
 
     push();
-    fill(127);
-    stroke(200);
+    fill(this.color);
+    stroke(this.color);
+    strokeWeight(2);
     translate(this.position.x, this.position.y);
     rotate(theta);
 
@@ -172,6 +177,27 @@ class Boid {
       return this.seek(sum); // Steer towards the location
     } else {
       return createVector(0, 0);
+    }
+  }
+
+  fov(boids){
+    let sightD = 50;
+    let periphery = PI/100;
+    circle(this.position.x, this.position.y, sightD);
+    noFill();
+    stroke(255);
+    strokeWeight(0.5);
+
+    for(let i = 0; i < boids.length; i++) {
+      let currentBoid = boids[i];
+      let dv = p5.Vector.sub(currentBoid.position, this.position);
+
+      let distance = p5.Vector.dist(this.position, currentBoid.position);
+      let diffAngle = dv.angleBetween(this.velocity);
+
+      if(diffAngle<periphery && distance>0 && distance < sightD){
+          currentBoid.color = this.color;
+      }
     }
   }
 }
