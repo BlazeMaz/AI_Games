@@ -13,7 +13,6 @@ let slider2;
 let slider3;
 
 let checkbox;
-let angle;
 
 function setup() {
 
@@ -30,9 +29,6 @@ function setup() {
   slider1.position(670, 30);
   slider2.position(670, 60);
   slider3.position(670, 90);
-
-  checkbox = createCheckbox('auto change', false);
-  checkbox.position(670, 120);
 }
 
 function draw() {
@@ -44,6 +40,4 @@ function draw() {
     v.borders();
     v.display();
   }
-
-  angle +=0.01;
 }
