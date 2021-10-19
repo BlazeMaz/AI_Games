@@ -18,6 +18,7 @@ function draw() {
 
   // Call the appropriate steering behaviors for our agents
   v.wanderReynolds();
+  v.wanderInsideArea();
   v.update();
   v.display();
 

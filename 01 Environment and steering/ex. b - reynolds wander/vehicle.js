@@ -35,7 +35,7 @@ class Vehicle {
   
     // A method that calculates a steering force towards a target
     // STEER = DESIRED MINUS VELOCITY
-    wanderInsideArea(target) {
+    wanderInsideArea() {
       let d = 40;
       let desired = null;
   
@@ -63,6 +63,7 @@ class Vehicle {
     wanderReynolds(){
       let d = 20;
       let wanderPoint = this.velocity.copy();
+
       wanderPoint.setMag(100);
       wanderPoint.add(this.position);
 
